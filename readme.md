@@ -2,12 +2,9 @@
 
 ## 介绍
 
----
 sim-py是一个基于时间的python仿真框架。
 
 ## 核心概念
-
----
 
 **1. 实体（Entity）：**
 
@@ -27,8 +24,6 @@ sim-py是一个基于时间的python仿真框架。
 
 ## 运行方式
 
----
-
 ### 总体流程
 
 1. 创建场景  
@@ -39,7 +34,7 @@ sim-py是一个基于时间的python仿真框架。
    4.1. 实体依据事件信息各自推进自己的状态  
    4.2. 实体观察场景（中的其他实体），并改变自己的状态（受其他实体影响）
 
-```python
+```{.python}
     scene = sim.Scene()  
 
     scene.add(sim.Radar())  
@@ -60,23 +55,45 @@ sim-py是一个基于时间的python仿真框架。
 
 ### 事件处理  
 
-TODO: 事件处理  
-
 在框架中，用户可以挂接2种消息处理对象（或函数）：  
 
-1. 步进消息处理  
+01. 步进消息处理  
 
 * 触发时机：在实体或场景仿真步进后触发.
 * 挂接对象：场景，实体.
 * 其他：消息的处理通常不会改变实体的状态.
 
-2. 交互消息处理
+```{.python}
+import sim
 
+def print_scene_time(scene):
+    print("scene time: {}\n".format(scene.time_info))
+
+def print_entity_info(obj):
+    print("* entity {}: time {}".format(obj.id, obj.time_info))
+
+class EntityPrinter:
+    def __call__(self, obj):
+        print("+ entity {}: time {}".format(obj.id, obj.time_info))
+
+scene = sim.Scene()
+
+obj1 = sim.Entity()
+scene.add(obj1)
+obj1.step_handlers += [EntityPrinter()] # 方法1：绑定可调用对象.
+
+obj2 = scene.add(sim.Entity())
+obj2.step_handlers += [print_entity_info] # 方法2：绑定函数对象.
+
+scene.step_handlers += [print_scene_time] # 绑定场景步进.
+```
+
+02. 交互消息处理
 
 * 触发时机：在仿真实体相互交互时
 * 挂接对象：实体
 * 其他：通常会（用于）改变实体的状态.
 
+---
 
-
-
+- [ ] todo
